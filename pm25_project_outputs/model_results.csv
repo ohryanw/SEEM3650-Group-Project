@@ -1,0 +1,10 @@
+Model,Feature_Set,Features,MAE,RMSE,R2
+RandomForest,WeatherPlusVehicles,"mean_temp, mean_humidity, rainfall, total_vehicles, ev_share",2.364616049382715,2.8584304263033027,0.7907155261470855
+RandomForest,WeatherPlusVehiclesPlusDiesel,"mean_temp, mean_humidity, rainfall, total_vehicles, diesel_share, ev_share",2.379112345679011,2.9072821131270796,0.7835008920686684
+LinearRegression,WeatherPlusVehicles,"mean_temp, mean_humidity, rainfall, total_vehicles, ev_share",2.9114766313900877,3.694686800396302,0.6503471949907003
+Ridge,WeatherPlusVehicles,"mean_temp, mean_humidity, rainfall, total_vehicles, ev_share",2.9843859279052007,3.809940467635126,0.6281925069758295
+LinearRegression,WeatherPlusVehiclesPlusDiesel,"mean_temp, mean_humidity, rainfall, total_vehicles, diesel_share, ev_share",2.991720280694469,3.887272639029561,0.6129458203503386
+Ridge,WeatherPlusVehiclesPlusDiesel,"mean_temp, mean_humidity, rainfall, total_vehicles, diesel_share, ev_share",3.044539385976887,3.992232822136522,0.59176195052196
+LinearRegression,WeatherOnly,"mean_temp, mean_humidity, rainfall",4.166199407976541,4.944960742647255,0.37366388401430617
+Ridge,WeatherOnly,"mean_temp, mean_humidity, rainfall",4.173967395948664,4.946508349135694,0.37327177836571823
+RandomForest,WeatherOnly,"mean_temp, mean_humidity, rainfall",4.418379012345668,5.333739228046136,0.27130579445189706
