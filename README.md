@@ -1,28 +1,15 @@
-# Predicting Monthly PM2.5 Concentrations in Hong Kong Using Weather and Vehicle Factors
+Below is a **complete GitHub `README.md`** that includes your **project explanation, report summary, data sources, methodology, model results, diagram explanations, code explanation, limitations, societal impact, and running instructions**.
 
-## Project Overview
-
-This project predicts monthly PM2.5 concentrations in Hong Kong using weather conditions and vehicle-related variables. PM2.5 is a fine particulate air pollutant that can negatively affect public health, so understanding its patterns is important for environmental planning and transport policy.
-
-The study combines monthly PM2.5 data, weather data, and vehicle registration data from 2015 to 2025. Machine learning regression models are then used to estimate monthly PM2.5 levels and compare whether adding vehicle-related variables improves prediction accuracy compared with using weather variables alone.
-
-The project also investigates whether the increasing share of electric vehicles is associated with changes in PM2.5 concentrations over time.
+You can copy everything inside the code block and paste it directly into your repository’s `README.md`.
 
 ---
 
-## Research Question
+```markdown
+# Predicting Monthly PM2.5 Concentrations in Hong Kong with Weather and Vehicle Factors
 
-The main research question is:
+## Project Title
 
-> Can monthly PM2.5 levels in Hong Kong be predicted using weather and vehicle data, and does adding vehicle-related information improve prediction accuracy compared with weather-only models?
-
-More specifically, the project compares:
-
-1. Weather-only models
-2. Weather + vehicle models
-3. Weather + vehicle + diesel-share models
-
----
+**Report on Predicting Monthly PM2.5 Concentrations in Hong Kong with Weather and Vehicle Factors**
 
 ## Group Members
 
@@ -30,26 +17,1021 @@ More specifically, the project compares:
 - Leung Ting Yan Windsor  
 - Woo Ryan  
 
+## GitHub Repository
+
+This repository contains the data processing workflow, exploratory data analysis, machine learning models, visualizations, and final report for predicting monthly PM2.5 concentrations in Hong Kong using weather and vehicle-related variables.
+
 ---
 
-## Repository Contents
+# Table of Contents
 
-This repository contains the code, figures, and report materials for the project.
+1. [Project Overview](#project-overview)
+2. [Research Question](#research-question)
+3. [Motivation](#motivation)
+4. [Dataset Description](#dataset-description)
+5. [Target Variable](#target-variable)
+6. [Predictor Variables](#predictor-variables)
+7. [Data Sources](#data-sources)
+8. [Station Weighting Method](#station-weighting-method)
+9. [Methodology](#methodology)
+10. [Data Processing Workflow](#data-processing-workflow)
+11. [Model Design](#model-design)
+12. [Train-Test Strategy](#train-test-strategy)
+13. [Evaluation Metrics](#evaluation-metrics)
+14. [Exploratory Data Analysis](#exploratory-data-analysis)
+15. [Model Results](#model-results)
+16. [Diagram Explanations](#diagram-explanations)
+17. [Best Model Discussion](#best-model-discussion)
+18. [Feature Importance](#feature-importance)
+19. [Residual Analysis](#residual-analysis)
+20. [Pros and Cons](#pros-and-cons)
+21. [Potential Improvements](#potential-improvements)
+22. [Societal Impact](#societal-impact)
+23. [Conclusion](#conclusion)
+24. [How to Run the Code](#how-to-run-the-code)
+25. [Suggested Repository Structure](#suggested-repository-structure)
+26. [Requirements](#requirements)
+27. [Acknowledgements](#acknowledgements)
 
-Suggested repository structure:
+---
+
+# Project Overview
+
+This project aims to predict monthly PM2.5 concentrations in Hong Kong using machine learning regression models. PM2.5 refers to fine particulate matter with a diameter of 2.5 micrometers or smaller. It is a major air pollutant that can affect public health, visibility, and overall environmental quality.
+
+The project combines three main types of monthly data from 2015 to 2025:
+
+1. PM2.5 air pollution data
+2. Weather data
+3. Vehicle data
+
+The main goal is not only to predict PM2.5 levels, but also to understand whether vehicle-related variables improve prediction accuracy beyond weather variables alone.
+
+In particular, this project studies whether the growth of electric vehicles and changes in diesel vehicle share are associated with changes in monthly PM2.5 levels in Hong Kong.
+
+---
+
+# Research Question
+
+The main research question is:
+
+> Can monthly PM2.5 concentrations in Hong Kong be predicted using weather and vehicle-related variables, and does adding vehicle information improve prediction compared with weather-only models?
+
+The project also asks:
+
+- How strongly are PM2.5 levels related to weather conditions?
+- Do vehicle-related variables improve model performance?
+- Which model gives the best prediction accuracy?
+- Which features are most important in predicting PM2.5?
+- Is the rise of electric vehicles associated with lower PM2.5 levels?
+
+---
+
+# Motivation
+
+Air pollution is an important environmental and public health issue in dense urban cities such as Hong Kong. PM2.5 is especially concerning because small particles can enter the lungs and affect respiratory and cardiovascular health.
+
+Transportation is one of the possible contributors to urban air pollution. As Hong Kong shifts from conventional fuel-powered vehicles to electric vehicles, it is useful to investigate whether changes in the vehicle fleet are associated with changes in PM2.5 concentration.
+
+This project is motivated by three ideas:
+
+1. Weather conditions strongly affect air pollution concentration.
+2. Vehicle composition may influence long-term air quality trends.
+3. Machine learning models can help identify predictive patterns in environmental data.
+
+---
+
+# Dataset Description
+
+The dataset covers monthly observations from:
+
+```text
+January 2015 to December 2025
+```
+
+After processing, each row represents one month.
+
+The final dataset combines:
+
+- Monthly weighted PM2.5 concentration
+- Monthly mean temperature
+- Monthly mean humidity
+- Monthly total rainfall
+- Monthly total number of vehicles
+- Monthly diesel vehicle share
+- Monthly electric vehicle share
+
+The final modeling dataset contains approximately 132 monthly observations.
+
+---
+
+# Target Variable
+
+The target variable is:
+
+```text
+pm25_target
+```
+
+This variable represents the weighted monthly PM2.5 concentration in Hong Kong.
+
+Because PM2.5 is measured at multiple monitoring stations, the project combines station-level readings into one city-level PM2.5 indicator. Different weights are assigned to different stations based on their representativeness of Hong Kong’s urban and residential environment.
+
+---
+
+# Predictor Variables
+
+The predictor variables used in the models are:
+
+| Variable | Description |
+|---|---|
+| `mean_temp` | Monthly mean temperature |
+| `mean_humidity` | Monthly mean relative humidity |
+| `rainfall` | Monthly total rainfall |
+| `total_vehicles` | Total number of licensed vehicles |
+| `ev_share` | Share of electric vehicles |
+| `diesel_share` | Share of diesel vehicles |
+
+These variables were selected because weather conditions influence pollutant concentration, while vehicle fleet structure may affect transport-related emissions.
+
+---
+
+# Data Sources
+
+This project uses three main data sources.
+
+## 1. Monthly Weather Data of Hong Kong
+
+Source:
+
+```text
+https://www.hko.gov.hk/en/wxinfo/pastwx/mws/mws.htm
+```
+
+Weather variables include:
+
+- Mean temperature
+- Mean relative humidity
+- Total rainfall
+
+## 2. PM2.5 Concentration Data in Hong Kong
+
+Sources:
+
+```text
+https://cd.epic.epd.gov.hk/EPICDI/air/station/?lang=en
+https://statbase.org/data/hkg-air-pollution/
+```
+
+The PM2.5 data contains monthly PM2.5 values collected from multiple Hong Kong air quality monitoring stations.
+
+## 3. Hong Kong Licensed Vehicles by Fuel Type
+
+Source:
+
+```text
+https://webbsite.0xmd.com/dbpub/vefuel.asp?sort=&y=2025&m=12&simple=False&t=0
+```
+
+Vehicle variables include:
+
+- Total vehicles
+- Diesel share
+- Electric vehicle share
+
+---
+
+# Station Weighting Method
+
+PM2.5 values were collected from different air quality monitoring stations across Hong Kong. Since some stations represent dense urban areas while others represent less populated or background locations, a weighted average was used to create the final PM2.5 target.
+
+| Station | Weight | Reason |
+|---|---:|---|
+| CAUSEWAY BAY | 1.25 | Dense urban core |
+| CENTRAL | 1.25 | Dense urban core |
+| WESTERN | 1.25 | Dense urban core |
+| EASTERN | 1.00 | Populated urban residential area |
+| KWAI CHUNG | 1.00 | Dense industrial/residential area |
+| KWUN TONG | 1.25 | Dense urban district |
+| MONG KOK | 1.25 | Very dense urban district |
+| NORTH | 1.00 | Populated new town area |
+| SHAM SHUI PO | 1.25 | Dense urban district |
+| SHATIN | 1.00 | Major new town |
+| SOUTHERN | 0.75 | Lower density relative to urban core |
+| TAI PO | 1.00 | Major residential new town |
+| TAP MUN | 0.50 | Remote/background-like station |
+| TSEUNG KWAN O | 1.00 | Major residential new town |
+| TSUEN WAN | 1.00 | Major urban/residential district |
+| TUEN MUN | 1.00 | Major residential district |
+| TUNG CHUNG | 0.75 | Smaller or less representative historically |
+| YUEN LONG | 1.00 | Major residential district |
+
+The purpose of weighting is to make the PM2.5 target more representative of populated and urban parts of Hong Kong.
+
+---
+
+# Methodology
+
+The project uses supervised machine learning regression.
+
+The overall methodology includes:
+
+1. Collecting PM2.5, weather, and vehicle data
+2. Cleaning and standardizing each dataset
+3. Converting all datasets into monthly format
+4. Merging datasets by date
+5. Creating the weighted PM2.5 target
+6. Conducting exploratory data analysis
+7. Training regression models
+8. Comparing models using test-set performance
+9. Visualizing actual vs predicted PM2.5 values
+10. Interpreting feature importance and residuals
+
+The analysis was implemented in Python using:
+
+- `pandas`
+- `numpy`
+- `matplotlib`
+- `seaborn`
+- `scikit-learn`
+
+---
+
+# Data Processing Workflow
+
+The code follows these main steps.
+
+## 1. Import Libraries
+
+Typical libraries used include:
+
+```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from sklearn.linear_model import LinearRegression, Ridge
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.impute import SimpleImputer
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+```
+
+## 2. Load Data
+
+The PM2.5, weather, and vehicle datasets are loaded into pandas DataFrames.
+
+Example:
+
+```python
+pm25 = pd.read_csv("data/pm25_data.csv")
+weather = pd.read_csv("data/weather_data.csv")
+vehicles = pd.read_csv("data/vehicle_data.csv")
+```
+
+## 3. Clean Column Names
+
+Column names are standardized to avoid merge and modeling errors.
+
+Example:
+
+```python
+df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_")
+```
+
+## 4. Convert Dates
+
+All date columns are converted into a consistent monthly datetime format.
+
+Example:
+
+```python
+df["date"] = pd.to_datetime(df["date"])
+```
+
+## 5. Merge Datasets
+
+Datasets are merged by monthly date.
+
+Example:
+
+```python
+merged = pm25.merge(weather, on="date", how="inner")
+merged = merged.merge(vehicles, on="date", how="inner")
+```
+
+## 6. Create Feature Sets
+
+Three feature sets are created:
+
+```python
+weather_only = ["mean_temp", "mean_humidity", "rainfall"]
+
+weather_plus_vehicles = [
+    "mean_temp",
+    "mean_humidity",
+    "rainfall",
+    "total_vehicles",
+    "ev_share"
+]
+
+weather_plus_vehicles_diesel = [
+    "mean_temp",
+    "mean_humidity",
+    "rainfall",
+    "total_vehicles",
+    "ev_share",
+    "diesel_share"
+]
+```
+
+## 7. Train Models
+
+Three models are trained:
+
+```python
+LinearRegression()
+Ridge()
+RandomForestRegressor()
+```
+
+## 8. Evaluate Models
+
+The models are evaluated using:
+
+```python
+MAE
+RMSE
+R²
+```
+
+## 9. Generate Visualizations
+
+The code produces:
+
+- PM2.5 trend plot
+- Weather trend plot
+- Vehicle trend plot
+- Histograms
+- Correlation heatmap
+- Actual vs predicted plots
+- Feature importance plot
+- Residual plot
+
+---
+
+# Model Design
+
+Three models are compared.
+
+## Linear Regression
+
+Linear Regression is used as the baseline model. It assumes a linear relationship between predictors and PM2.5.
+
+Advantages:
+
+- Easy to understand
+- Easy to interpret
+- Good baseline model
+
+Limitations:
+
+- Cannot capture complex nonlinear relationships
+- Sensitive to correlated predictors
+
+## Ridge Regression
+
+Ridge Regression is a regularized version of Linear Regression. It helps when predictors are correlated.
+
+Advantages:
+
+- More stable than ordinary Linear Regression
+- Useful when multicollinearity exists
+- Still relatively interpretable
+
+Limitations:
+
+- Still assumes mostly linear relationships
+- May not capture complex interactions
+
+## Random Forest Regression
+
+Random Forest Regression is a tree-based ensemble model. It can capture nonlinear relationships and interactions between variables.
+
+Advantages:
+
+- Captures nonlinear patterns
+- Handles interactions between features
+- Often performs well on tabular data
+- Provides feature importance values
+
+Limitations:
+
+- Less directly interpretable than Linear Regression
+- Can overfit if not controlled
+- Needs careful evaluation on unseen data
+
+---
+
+# Feature Sets
+
+Three feature sets are tested.
+
+## Feature Set A: Weather Only
+
+```text
+mean_temp
+mean_humidity
+rainfall
+```
+
+This tests whether meteorological conditions alone can predict PM2.5.
+
+## Feature Set B: Weather + Vehicles
+
+```text
+mean_temp
+mean_humidity
+rainfall
+total_vehicles
+ev_share
+```
+
+This tests whether adding vehicle-related variables improves prediction.
+
+## Feature Set C: Weather + Vehicles + Diesel
+
+```text
+mean_temp
+mean_humidity
+rainfall
+total_vehicles
+ev_share
+diesel_share
+```
+
+This tests whether diesel share provides additional information beyond total vehicles and EV share.
+
+---
+
+# Train-Test Strategy
+
+Because the data is time-ordered, a chronological train-test split is used instead of a random split.
+
+| Dataset | Period |
+|---|---|
+| Training set | January 2015 to September 2023 |
+| Test set | October 2023 to December 2025 |
+
+This strategy better represents a real forecasting situation, where past data is used to predict future values.
+
+A random split was avoided because it could allow information from future months to leak into the training process.
+
+---
+
+# Evaluation Metrics
+
+Three evaluation metrics are used.
+
+## Mean Absolute Error
+
+```text
+MAE
+```
+
+MAE measures the average absolute difference between actual and predicted PM2.5 values.
+
+Lower MAE means better prediction accuracy.
+
+## Root Mean Squared Error
+
+```text
+RMSE
+```
+
+RMSE measures prediction error while giving larger errors more penalty.
+
+Lower RMSE means better prediction accuracy.
+
+## R-Squared
+
+```text
+R²
+```
+
+R² measures how much variation in PM2.5 is explained by the model.
+
+Higher R² means better explanatory power.
+
+---
+
+# Exploratory Data Analysis
+
+## Weighted Monthly PM2.5 Trend
+
+![Weighted Monthly PM2.5 Trend](figures/weighted_pm25_trend.png)
+
+This plot shows the weighted monthly PM2.5 concentration in Hong Kong from 2015 to 2025.
+
+The PM2.5 series shows strong seasonal fluctuations. PM2.5 tends to rise and fall repeatedly across the years, suggesting that seasonal weather conditions are important. The earlier years show higher and more volatile PM2.5 levels, while later years generally show lower levels. However, several spikes still appear in the later period.
+
+This indicates that PM2.5 is affected by both seasonal meteorological factors and longer-term structural changes.
+
+---
+
+## Weather Trends
+
+![Weather Trends](figures/weather_trends.png)
+
+This plot shows monthly trends for:
+
+- Mean temperature
+- Mean humidity
+- Rainfall
+
+Temperature follows a clear seasonal pattern. Rainfall is highly volatile and contains some extreme monthly values. Humidity is more stable than rainfall, but it still changes seasonally.
+
+These trends suggest that weather variables are likely to be important predictors of monthly PM2.5.
+
+---
+
+## Vehicle Trends
+
+![Vehicle Trends](figures/vehicle_trends.png)
+
+This plot shows vehicle-related trends from 2015 to 2025.
+
+The total number of licensed vehicles generally increased over time. Diesel share generally decreased, while electric vehicle share increased noticeably in recent years.
+
+This suggests that Hong Kong’s vehicle fleet is gradually changing. However, since these variables also move over time, the relationship between vehicle variables and PM2.5 should be interpreted carefully.
+
+---
+
+## Histograms of Numeric Variables
+
+![Histograms of Numeric Variables](figures/histograms.png)
+
+The histogram figure shows the distribution of the main variables.
+
+Key observations:
+
+- PM2.5 is mostly concentrated in the lower-to-middle range.
+- A few high PM2.5 values indicate pollution episodes.
+- Rainfall is strongly right-skewed, with many low-rainfall months and a few very wet months.
+- EV share is also right-skewed because electric vehicles were uncommon earlier but increased later.
+- Temperature and humidity are more stable and seasonal.
+- Total vehicles show a trend-based distribution because vehicle numbers increased over time.
+
+These distributions suggest that nonlinear models may be useful.
+
+---
+
+## Correlation Heatmap
+
+![Correlation Heatmap](figures/correlation_heatmap.png)
+
+The correlation heatmap shows relationships among the variables.
+
+Important correlations include:
+
+| Relationship | Correlation |
+|---|---:|
+| PM2.5 and mean temperature | -0.72 |
+| PM2.5 and rainfall | -0.57 |
+| PM2.5 and total vehicles | -0.49 |
+| PM2.5 and EV share | -0.32 |
+| PM2.5 and diesel share | 0.43 |
+| Total vehicles and diesel share | -0.83 |
+| Diesel share and EV share | -0.88 |
+| Total vehicles and EV share | 0.65 |
+
+The strong negative correlation between PM2.5 and temperature suggests that PM2.5 tends to be higher during cooler months.
+
+The negative correlation between PM2.5 and rainfall suggests that rain may help reduce airborne particles.
+
+The strong correlations among vehicle variables suggest multicollinearity. This is one reason Ridge Regression was included.
+
+---
+
+# Model Results
+
+The table below summarizes model performance on the test set.
+
+| Model | Feature Set | RMSE | R² |
+|---|---|---:|---:|
+| Linear Regression | Weather Only | 4.945 | 0.374 |
+| Ridge Regression | Weather Only | 4.947 | 0.373 |
+| Random Forest | Weather Only | 5.334 | 0.271 |
+| Linear Regression | Weather + Vehicles | 3.695 | 0.650 |
+| Ridge Regression | Weather + Vehicles | 3.810 | 0.628 |
+| Random Forest | Weather + Vehicles | 2.858 | 0.791 |
+| Linear Regression | Weather + Vehicles + Diesel | 3.887 | 0.613 |
+| Ridge Regression | Weather + Vehicles + Diesel | 3.992 | 0.592 |
+| Random Forest | Weather + Vehicles + Diesel | 2.907 | 0.784 |
+
+---
+
+# Diagram Explanations
+
+## Actual vs Predicted Plots
+
+The actual vs predicted plots compare the observed PM2.5 values with model predictions during the test period.
+
+In each plot:
+
+- The blue line shows the actual PM2.5 values.
+- The orange line shows the predicted PM2.5 values.
+- A better model has the orange line closer to the blue line.
+
+---
+
+## Linear Regression: Weather Only
+
+![Actual vs Predicted - Linear Regression - Weather Only](figures/actual_vs_predicted_linear_weather_only.png)
+
+This model uses only weather variables. It captures the general seasonal pattern but misses many sharp changes. The predictions are smoother than the actual values, meaning the model cannot fully explain PM2.5 variation using weather alone.
+
+---
+
+## Ridge Regression: Weather Only
+
+![Actual vs Predicted - Ridge - Weather Only](figures/actual_vs_predicted_ridge_weather_only.png)
+
+The Ridge weather-only model performs similarly to the Linear Regression weather-only model. Because only three weather variables are included, Ridge regularization does not create a major improvement.
+
+The model still tends to overpredict some low PM2.5 months and underpredict some high PM2.5 months.
+
+---
+
+## Random Forest: Weather Only
+
+![Actual vs Predicted - Random Forest - Weather Only](figures/actual_vs_predicted_randomforest_weather_only.png)
+
+The Random Forest weather-only model captures some nonlinear weather effects, but it performs worse than the models with vehicle variables. This suggests that weather alone does not contain enough information for the best prediction.
+
+---
+
+## Linear Regression: Weather + Vehicles
+
+![Actual vs Predicted - Linear Regression - Weather Plus Vehicles](figures/actual_vs_predicted_linear_weather_vehicles.png)
+
+Adding vehicle variables improves Linear Regression performance. The predicted line follows the actual line more closely than the weather-only model.
+
+This suggests that vehicle-related variables provide additional predictive information.
+
+---
+
+## Ridge Regression: Weather + Vehicles
+
+![Actual vs Predicted - Ridge - Weather Plus Vehicles](figures/actual_vs_predicted_ridge_weather_vehicles.png)
+
+The Ridge Regression model with weather and vehicle variables also improves compared with the weather-only version.
+
+Ridge Regression is useful here because vehicle variables are correlated with one another. The model is more stable than ordinary Linear Regression when predictors have multicollinearity.
+
+---
+
+## Random Forest: Weather + Vehicles
+
+![Actual vs Predicted - Random Forest - Weather Plus Vehicles](figures/actual_vs_predicted_randomforest_weather_vehicles.png)
+
+This is the best-performing model.
+
+The Random Forest model with weather and vehicle variables follows the actual PM2.5 trend most closely. It captures many peaks and troughs better than the linear models.
+
+However, it still underestimates or overestimates some months, especially unusual pollution episodes.
+
+---
+
+## Linear Regression: Weather + Vehicles + Diesel
+
+![Actual vs Predicted - Linear Regression - Weather Vehicles Diesel](figures/actual_vs_predicted_linear_weather_vehicles_diesel.png)
+
+Adding diesel share does not improve Linear Regression performance. The model performs slightly worse than the Weather + Vehicles version.
+
+This may happen because diesel share is strongly correlated with EV share and total vehicles, so it adds redundant information.
+
+---
+
+## Ridge Regression: Weather + Vehicles + Diesel
+
+![Actual vs Predicted - Ridge - Weather Vehicles Diesel](figures/actual_vs_predicted_ridge_weather_vehicles_diesel.png)
+
+The Ridge Regression model with diesel share also performs slightly worse than the Ridge model without diesel share.
+
+Although Ridge helps reduce multicollinearity problems, diesel share still does not provide enough additional information to improve prediction.
+
+---
+
+## Random Forest: Weather + Vehicles + Diesel
+
+![Actual vs Predicted - Random Forest - Weather Vehicles Diesel](figures/actual_vs_predicted_randomforest_weather_vehicles_diesel.png)
+
+The Random Forest model with diesel share performs well but slightly worse than the Random Forest Weather + Vehicles model.
+
+This supports the idea that diesel share is somewhat redundant when total vehicles and EV share are already included.
+
+---
+
+# Best Model Discussion
+
+The best-performing model is:
+
+```text
+Random Forest Regression with Weather + Vehicles
+```
+
+This model achieved:
+
+```text
+RMSE = 2.858
+R² = 0.791
+```
+
+This means the model explains approximately 79.1% of the variation in monthly PM2.5 in the test period.
+
+The Random Forest model performs best because it can capture nonlinear relationships and interactions between predictors. PM2.5 is influenced by complex factors, so a flexible model is more suitable than a purely linear method.
+
+The inclusion of vehicle variables improved performance compared with weather-only models. However, adding diesel share did not improve the result, likely because diesel share is highly correlated with other vehicle variables.
+
+---
+
+# Feature Importance
+
+![Feature Importance](figures/feature_importance.png)
+
+The feature importance plot comes from the best Random Forest model.
+
+Approximate feature importance values are:
+
+| Feature | Importance |
+|---|---:|
+| `mean_temp` | 0.477 |
+| `total_vehicles` | 0.128 |
+| `rainfall` | 0.125 |
+| `ev_share` | 0.075 |
+| `mean_humidity` | 0.060 |
+
+The most important predictor is mean temperature. This suggests that seasonal weather patterns are the strongest driver of monthly PM2.5 variation.
+
+Total vehicles and rainfall are the next most important predictors. EV share and humidity have smaller but still meaningful contributions.
+
+Overall, the results show that meteorological factors are the main predictors, while vehicle-related variables provide additional predictive value.
+
+---
+
+# Residual Analysis
+
+![Residual Plot](figures/residual_plot.png)
+
+The residual plot shows the difference between actual and predicted PM2.5.
+
+Residual is calculated as:
+
+```text
+Residual = Actual PM2.5 - Predicted PM2.5
+```
+
+A good model should have residuals randomly scattered around zero.
+
+In this project, most residuals are close to zero, showing that the model is reasonably well-calibrated. However, some residuals are large, meaning the model still fails to predict certain months accurately.
+
+Possible reasons include missing variables such as:
+
+- Wind speed
+- Wind direction
+- Regional pollution transport
+- Industrial emissions
+- Construction activity
+- Short-term traffic conditions
+- Unusual weather events
+- Policy changes
+
+Therefore, although the final model performs well, there is still room for improvement.
+
+---
+
+# Pros and Cons
+
+## Pros
+
+- Uses real-world environmental and transport data
+- Combines air pollution prediction with transport policy relevance
+- Uses multiple machine learning models for comparison
+- Uses chronological train-test split suitable for time-ordered data
+- Includes interpretable plots and metrics
+- Tests whether vehicle variables improve PM2.5 prediction
+- Produces a practical modeling pipeline
+- Provides both predictive and environmental insights
+
+## Cons
+
+- Monthly data gives a relatively small sample size
+- PM2.5 is affected by many factors not included in the dataset
+- Station weighting may introduce subjectivity
+- Vehicle counts do not directly measure actual road emissions
+- EV share may be correlated with time trends rather than directly causing PM2.5 changes
+- Results are predictive rather than causal
+- Some pollution spikes remain difficult to predict
+
+---
+
+# Potential Improvements
+
+This project could be improved in several ways.
+
+## 1. Add More Environmental Variables
+
+Future work could include:
+
+- Wind speed
+- Wind direction
+- Atmospheric pressure
+- Visibility
+- Solar radiation
+- Regional pollution transport indicators
+
+## 2. Add More Traffic and Emission Variables
+
+Useful additional variables could include:
+
+- Road traffic volume
+- Vehicle kilometers traveled
+- Public transport ridership
+- Industrial activity
+- Construction activity
+- Fuel consumption
+- Roadside emission estimates
+
+## 3. Improve PM2.5 Aggregation
+
+The station weighting method could be improved by:
+
+- Using population-based weights
+- Using district-level exposure weights
+- Comparing weighted and unweighted averages
+- Testing sensitivity to different weighting schemes
+
+## 4. Add Time-Series Features
+
+Future models could include:
+
+- Lagged PM2.5 values
+- Month dummy variables
+- Seasonal indicators
+- Moving averages
+- Long-term trend variables
+
+## 5. Try More Models
+
+Additional models could include:
+
+- Lasso Regression
+- Elastic Net Regression
+- XGBoost
+- LightGBM
+- ARIMA
+- SARIMAX
+- Prophet
+- LSTM models
+
+## 6. Run Robustness Checks
+
+Robustness checks could include:
+
+- Different train-test periods
+- Equal-weight vs weighted PM2.5 target
+- Removing extreme rainfall months
+- Testing different Random Forest parameters
+- Comparing results before and after COVID-19 period
+
+---
+
+# Societal Impact
+
+This project has social and environmental relevance because PM2.5 pollution affects public health. High PM2.5 exposure can harm respiratory and cardiovascular health, especially for vulnerable groups such as children, elderly people, and people with existing health conditions.
+
+The project also connects air quality with transport transition. As Hong Kong adopts more electric vehicles, it is important to study whether changes in vehicle composition are associated with cleaner air.
+
+Traditional petrol and diesel vehicles emit pollutants directly into the urban environment. These emissions are distributed across many roads and are difficult to control at each individual source. Electric vehicles do not release tailpipe PM2.5 while driving, so increasing EV adoption may help improve roadside air quality.
+
+However, electric vehicles should not be viewed as the only solution. PM2.5 is also affected by weather, regional pollution, industrial activity, power generation, construction, and other sources. Therefore, cleaner transport should be part of a broader air quality strategy.
+
+The project can help:
+
+- Support environmental awareness
+- Encourage cleaner transport discussion
+- Provide evidence for policy planning
+- Demonstrate how machine learning can support public health and environmental research
+
+---
+
+# Conclusion
+
+This project developed a machine learning framework to predict monthly PM2.5 concentrations in Hong Kong using weather and vehicle-related data from 2015 to 2025.
+
+The results show that weather variables are very important predictors of PM2.5, especially mean temperature and rainfall. Adding vehicle-related variables improves model performance compared with weather-only models.
+
+The best model is:
+
+```text
+Random Forest Regression with Weather + Vehicles
+```
+
+It achieved:
+
+```text
+RMSE = 2.858
+R² = 0.791
+```
+
+This model provides the best balance between prediction accuracy and practical interpretability.
+
+Overall, the project shows that machine learning can be used to support air quality analysis and provide useful insights into the relationship between weather, vehicle trends, and PM2.5 concentrations.
+
+---
+
+# How to Run the Code
+
+## 1. Clone the Repository
+
+```bash
+git clone https://github.com/ohryanw/SEEM3650-Group-Project.git
+cd SEEM3650-Group-Project
+```
+
+## 2. Install Required Packages
+
+If a `requirements.txt` file is provided, run:
+
+```bash
+pip install -r requirements.txt
+```
+
+If not, install the main packages manually:
+
+```bash
+pip install pandas numpy matplotlib seaborn scikit-learn jupyter
+```
+
+## 3. Open Jupyter Notebook
+
+```bash
+jupyter notebook
+```
+
+Then open the main notebook, for example:
+
+```text
+notebooks/analysis.ipynb
+```
+
+## 4. Run Python Script
+
+If the project uses a Python script instead of a notebook, run:
+
+```bash
+python src/model_pipeline.py
+```
+
+## 5. View Outputs
+
+The generated outputs include:
+
+- Cleaned dataset
+- Summary statistics
+- Model performance table
+- Trend plots
+- Histograms
+- Correlation heatmap
+- Actual vs predicted plots
+- Feature importance plot
+- Residual plot
+
+---
+
+# Suggested Repository Structure
+
+A clear repository structure is recommended:
 
 ```text
 SEEM3650-Group-Project/
 │
 ├── README.md
+│
 ├── report/
 │   └── PM25_prediction_report.pdf
 │
 ├── data/
-│   ├── pm25_data.csv
-│   ├── weather_data.csv
-│   ├── vehicle_data.csv
-│   └── cleaned_monthly_dataset.csv
+│   ├── raw/
+│   │   ├── pm25_data.csv
+│   │   ├── weather_data.csv
+│   │   └── vehicle_data.csv
+│   │
+│   └── processed/
+│       └── cleaned_monthly_dataset.csv
 │
 ├── notebooks/
 │   └── analysis.ipynb
@@ -76,3 +1058,126 @@ SEEM3650-Group-Project/
 │   └── residual_plot.png
 │
 └── requirements.txt
+```
+
+---
+
+# Requirements
+
+Recommended Python version:
+
+```text
+Python 3.9 or above
+```
+
+Required packages:
+
+```text
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
+jupyter
+```
+
+Example `requirements.txt`:
+
+```text
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
+jupyter
+```
+
+---
+
+# Notes About Image Paths
+
+For the diagrams to appear correctly in GitHub, the file names in the `figures/` folder must match the image paths used in this README.
+
+For example, this line:
+
+```markdown
+![Feature Importance](figures/feature_importance.png)
+```
+
+requires the image file to be located at:
+
+```text
+figures/feature_importance.png
+```
+
+If your image has a different name, either rename the file or update the image path in the README.
+
+---
+
+# Acknowledgements
+
+This project uses publicly available data from:
+
+- Hong Kong Observatory
+- Hong Kong Environmental Protection Department air quality data
+- StatBase Hong Kong air pollution data
+- Hong Kong licensed vehicle fuel-type data
+
+This project was completed for SEEM3650 as a group project on environmental data analysis and machine learning.
+
+---
+
+# Disclaimer
+
+This project is mainly predictive and exploratory. The results show associations between PM2.5, weather variables, and vehicle-related variables, but they do not prove direct causation.
+
+In particular, the relationship between EV share and PM2.5 should be interpreted carefully because both variables change over time and may be influenced by other external factors.
+```
+
+---
+
+## What You Should Do Next
+
+After pasting this into GitHub:
+
+1. Create a folder called:
+
+```text
+figures
+```
+
+2. Upload all your chart images into that folder.
+
+3. Rename your images to match the README names, for example:
+
+```text
+weighted_pm25_trend.png
+weather_trends.png
+vehicle_trends.png
+histograms.png
+correlation_heatmap.png
+feature_importance.png
+residual_plot.png
+```
+
+4. If your actual filenames are different, change the image paths inside the README.
+
+5. Add your report PDF into a folder called:
+
+```text
+report
+```
+
+6. Add your notebook or Python code into:
+
+```text
+notebooks
+```
+
+or
+
+```text
+src
+```
+
+This README is now complete enough for a polished GitHub project submission.
