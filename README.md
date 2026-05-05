@@ -1,8 +1,6 @@
 <p align="center">
   <img src="banner.png" alt="Project Banner" width="100%">
 </p>
-# Predicting Monthly PM2.5 Concentrations in Hong Kong with Weather and Vehicle Factors
-
 ## Project Title
 
 **Predicting Monthly PM2.5 Concentrations in Hong Kong with Weather and Vehicle Factors**
