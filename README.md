@@ -42,11 +42,10 @@ This repository contains the Python code, data processing workflow, exploratory 
 22. [Societal Impact](#societal-impact)
 23. [Conclusion](#conclusion)
 24. [How to Run the Code](#how-to-run-the-code)
-25. [Repository Structure](#repository-structure)
-26. [Requirements](#requirements)
-27. [Notes About Figure Paths](#notes-about-figure-paths)
-28. [Acknowledgements](#acknowledgements)
-29. [Disclaimer](#disclaimer)
+25. [Requirements](#requirements)
+26. [Notes About Figure Paths](#notes-about-figure-paths)
+27. [Acknowledgements](#acknowledgements)
+28. [Disclaimer](#disclaimer)
 
 ---
 
