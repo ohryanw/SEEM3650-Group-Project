@@ -1,4 +1,3 @@
-```markdown
 # Predicting Monthly PM2.5 Concentrations in Hong Kong with Weather and Vehicle Factors
 
 ## Project Title
